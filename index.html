@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="et">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Minu Rododendronid</title>
+<meta name="theme-color" content="#7a3b56">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header class="app-header">
+  <h1>🌸 Minu Rododendronid</h1>
+  <p class="subtitle" id="plant-count"></p>
+</header>
+
+<main>
+  <div class="search-bar">
+    <input type="search" id="search-input" placeholder="Otsi nime järgi..." autocomplete="off">
+  </div>
+
+  <div id="plant-list" class="plant-list"></div>
+
+  <p id="empty-state" class="empty-state" hidden>Ühtegi taime ei leitud. Lisa esimene rododendron!</p>
+</main>
+
+<button id="add-btn" class="fab" aria-label="Lisa taim">+</button>
+
+<!-- Vaate modaal -->
+<div id="view-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <button class="modal-close" data-close-view>&times;</button>
+    <img id="view-photo" class="view-photo" hidden alt="">
+    <h2 id="view-name"></h2>
+    <dl class="view-details">
+      <dt>Asukoht aias</dt><dd id="view-location">—</dd>
+      <dt>Õitsemisaeg</dt><dd id="view-bloom">—</dd>
+      <dt>Kõrgus</dt><dd id="view-height">—</dd>
+      <dt>Laius</dt><dd id="view-width">—</dd>
+      <dt>Külmakindlus</dt><dd id="view-hardiness">—</dd>
+      <dt>Kus aretatud</dt><dd id="view-origin">—</dd>
+      <dt>Õie värv</dt><dd id="view-color">—</dd>
+      <dt>Märkmed</dt><dd id="view-notes">—</dd>
+    </dl>
+    <div class="modal-actions">
+      <button id="view-edit-btn" class="btn btn-secondary">Muuda</button>
+      <button id="view-delete-btn" class="btn btn-danger">Kustuta</button>
+    </div>
+  </div>
+</div>
+
+<!-- Lisa/muuda modaal -->
+<div id="edit-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <button class="modal-close" data-close-edit>&times;</button>
+    <h2 id="edit-modal-title">Lisa taim</h2>
+    <form id="plant-form">
+      <input type="hidden" id="plant-id">
+
+      <label for="field-name">Nimi *</label>
+      <input type="text" id="field-name" required placeholder="nt Fryderyk">
+
+      <label for="field-location">Asukoht aias</label>
+      <input type="text" id="field-location" placeholder="nt lääneserv, suure kase all">
+
+      <label for="field-bloom">Õitsemisaeg</label>
+      <select id="field-bloom">
+        <option value="">— vali kuu —</option>
+        <option>Aprill</option>
+        <option>Mai</option>
+        <option>Juuni</option>
+        <option>Juuli</option>
+      </select>
+
+      <div class="field-row">
+        <div>
+          <label for="field-height">Kõrgus</label>
+          <input type="text" id="field-height" placeholder="nt 120 cm">
+        </div>
+        <div>
+          <label for="field-width">Laius</label>
+          <input type="text" id="field-width" placeholder="nt 100 cm">
+        </div>
+      </div>
+
+      <label for="field-hardiness">Kui palju külma kardab</label>
+      <input type="text" id="field-hardiness" placeholder="nt talvekindel kuni -25°C">
+
+      <label for="field-origin">Kus aretatud</label>
+      <input type="text" id="field-origin" placeholder="nt Soome, Haaga aretus">
+
+      <label for="field-color">Õie värv</label>
+      <input type="text" id="field-color" placeholder="nt roosa, lilla, valge">
+
+      <label for="field-notes">Märkmed</label>
+      <textarea id="field-notes" rows="3" placeholder="hooldusinfo, tähelepanekud..."></textarea>
+
+      <label for="field-photo">Foto (kaamerast või galeriist)</label>
+      <input type="file" id="field-photo" accept="image/*" capture="environment">
+
+      <label for="field-photo-url">Või lisa pildi link veebist</label>
+      <input type="url" id="field-photo-url" placeholder="https://...">
+
+      <img id="photo-preview" class="photo-preview" hidden alt="">
+      <button type="button" id="photo-remove-btn" class="btn btn-text" hidden>Eemalda foto</button>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">Salvesta</button>
+        <button type="button" class="btn btn-secondary" data-close-edit>Loobu</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
