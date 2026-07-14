@@ -1,6 +1,6 @@
 {
-  "name": "Minu Rododendronid",
-  "short_name": "Rododendronid",
+  "name": "Minu rododendronid",
+  "short_name": "rododendronid",
   "description": "Minu rododendronite kollektsiooni haldur",
   "start_url": "./index.html",
   "scope": "./",

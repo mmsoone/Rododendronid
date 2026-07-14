@@ -10,7 +10,7 @@ const VARIETY_COLOR_HEX = {
   'Apricot': '#F7A661',
   'Helsinki University': '#CC6699',
   'Elsie Straver': '#F5D9A8',
-  'Cunninghama White': '#F7F5F0',
+  'Cunninghams White': '#F7F5F0',
   'Anna Rose Whitney': '#D9739A',
   'Diorama': '#E8622E',
   'Lilac Lights': '#B57EDC',
@@ -28,7 +28,7 @@ const SEED_DATA = [
   { name: 'Apricot', type: 'Asalea', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -26°C', origin: 'USA (Joseph Gable)' },
   { name: 'Helsinki University', type: 'Rododendron', height: '150-180 cm', width: '100-120 cm', hardiness: 'kuni -39°C', origin: 'Soome (Helsingi Ülikool / Mustila)' },
   { name: 'Elsie Straver', type: 'Rododendron', height: '200-250 cm', width: '200-250 cm', hardiness: 'kuni -18°C', origin: 'Holland (Boskoop)' },
-  { name: 'Cunninghama White', type: 'Rododendron', height: '200-220 cm', width: '150-160 cm', hardiness: 'kuni -26°C', origin: 'Šotimaa (James Cunningham, 1830)' },
+  { name: 'Cunninghams White', type: 'Rododendron', height: '200-220 cm', width: '150-160 cm', hardiness: 'kuni -26°C', origin: 'Šotimaa (James Cunningham, 1830)' },
   { name: 'Anna Rose Whitney', type: 'Rododendron', height: '180-200 cm', width: '180-200 cm', hardiness: 'kuni -21°C', origin: 'USA (William E. Whitney, 1954)' },
   { name: 'Diorama', type: 'Asalea', height: '160-200 cm', width: '100-200 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
   { name: 'Lilac Lights', type: 'Asalea', height: '120 cm', width: '120 cm', hardiness: 'kuni -34°C', origin: 'USA (Bailey Nurseries, Minnesota)' }
@@ -73,6 +73,22 @@ function savePlants(plants) {
   }
 }
 
+const RENAMES = {
+  'Cunninghama White': 'Cunninghams White'
+};
+
+function applyRenames(plants) {
+  let changed = false;
+  plants.forEach(p => {
+    if (RENAMES[p.name]) {
+      p.name = RENAMES[p.name];
+      changed = true;
+    }
+  });
+  if (changed) savePlants(plants);
+  return plants;
+}
+
 function mergeSeedData(plants) {
   let changed = false;
   const byName = new Map(plants.map(p => [p.name, p]));
@@ -94,7 +110,7 @@ function mergeSeedData(plants) {
   return plants;
 }
 
-let plants = mergeSeedData(loadPlants());
+let plants = mergeSeedData(applyRenames(loadPlants()));
 let currentViewId = null;
 
 const plantListEl = document.getElementById('plant-list');
