@@ -108,6 +108,22 @@ main {
   text-overflow: ellipsis;
 }
 
+.plant-card-hardiness {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--wine);
+  background: #eee3ea;
+  border-radius: 20px;
+  padding: 3px 9px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  box-sizing: border-box;
+}
+
 .empty-state {
   text-align: center;
   color: var(--muted);
@@ -191,9 +207,33 @@ main {
 .view-details dt {
   color: var(--muted);
   font-weight: 600;
+  font-size: 1.1rem;
+  display: flex;
+  align-items: center;
+  gap: 4px;
 }
 .view-details dd {
   margin: 0;
+}
+
+.color-swatch {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: var(--swatch-color, transparent);
+  border: 1px solid rgba(0,0,0,0.15);
+  vertical-align: middle;
+}
+
+#plant-form .icon-label {
+  font-size: 1.3rem;
+  margin: 14px 0 6px;
+}
+#plant-form label:has(.color-swatch) {
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .modal-actions {

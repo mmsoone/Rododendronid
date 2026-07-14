@@ -1,17 +1,47 @@
 const STORAGE_KEY = 'rododendronid.plants.v1';
 
-const SEED_PLANTS = [
-  'Fryderyk', 'Mariette', 'Nicoletta', 'Millenium',
-  'Haaga', 'Princes Daisy', 'Irene Koster', 'Apricot'
-].map(name => ({
+const VARIETY_COLOR_HEX = {
+  'Fryderyk': '#F4E5B8',
+  'Marietta': '#C9509E',
+  'Nicoletta': '#F2C6D9',
+  'Millenium Gold': '#E8C547',
+  'Haaga': '#D9548C',
+  'Irene Koster': '#F2C6C2',
+  'Apricot': '#F7A661',
+  'Helsinki University': '#CC6699',
+  'Elsie Straver': '#F5D9A8',
+  'Cunninghama White': '#F7F5F0',
+  'Anna Rose Whitney': '#D9739A',
+  'Diorama': '#E8622E',
+  'Lilac Lights': '#B57EDC'
+};
+
+const SEED_DATA = [
+  { name: 'Fryderyk', height: '50-60 cm', width: '80 cm', hardiness: 'kuni -24°C', origin: 'Poola (Piotr Muras, 2010)' },
+  { name: 'Marietta', height: '120-140 cm', width: '90-100 cm', hardiness: 'kuni -21°C', origin: '' },
+  { name: 'Nicoletta', height: '60-70 cm', width: '100-110 cm', hardiness: 'kuni -23°C', origin: 'Inglismaa (Waterer, Bagshot, 1969)' },
+  { name: 'Millenium Gold', height: '90-120 cm', width: '90-120 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
+  { name: 'Haaga', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -32°C', origin: 'Soome (Helsingi Ülikool / Mustila, Tigerstedt programm)' },
+  { name: 'Princes Daisy', height: '', width: '', hardiness: '', origin: '' },
+  { name: 'Irene Koster', height: '180-240 cm', width: '150-180 cm', hardiness: 'kuni -23°C', origin: 'Holland (M. Koster & Sons)' },
+  { name: 'Apricot', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -26°C', origin: 'USA (Joseph Gable)' },
+  { name: 'Helsinki University', height: '150-180 cm', width: '100-120 cm', hardiness: 'kuni -39°C', origin: 'Soome (Helsingi Ülikool / Mustila)' },
+  { name: 'Elsie Straver', height: '200-250 cm', width: '200-250 cm', hardiness: 'kuni -18°C', origin: 'Holland (Boskoop)' },
+  { name: 'Cunninghama White', height: '200-220 cm', width: '150-160 cm', hardiness: 'kuni -26°C', origin: 'Šotimaa (James Cunningham, 1830)' },
+  { name: 'Anna Rose Whitney', height: '180-200 cm', width: '180-200 cm', hardiness: 'kuni -21°C', origin: 'USA (William E. Whitney, 1954)' },
+  { name: 'Diorama', height: '160-200 cm', width: '100-200 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
+  { name: 'Lilac Lights', height: '120 cm', width: '120 cm', hardiness: 'kuni -34°C', origin: 'USA (Bailey Nurseries, Minnesota)' }
+];
+
+const SEED_PLANTS = SEED_DATA.map(({ name, height, width, hardiness, origin }) => ({
   id: crypto.randomUUID(),
   name,
   location: '',
   bloom: '',
-  height: '',
-  width: '',
-  hardiness: '',
-  origin: '',
+  height,
+  width,
+  hardiness,
+  origin,
   color: '',
   notes: '',
   photo: ''
@@ -34,7 +64,28 @@ function savePlants(plants) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(plants));
 }
 
-let plants = loadPlants();
+function mergeSeedData(plants) {
+  let changed = false;
+  const byName = new Map(plants.map(p => [p.name, p]));
+  SEED_PLANTS.forEach(seed => {
+    const existing = byName.get(seed.name);
+    if (!existing) {
+      plants.push({ ...seed, id: crypto.randomUUID() });
+      changed = true;
+    } else {
+      ['height', 'width', 'hardiness', 'origin'].forEach(field => {
+        if (!existing[field] && seed[field]) {
+          existing[field] = seed[field];
+          changed = true;
+        }
+      });
+    }
+  });
+  if (changed) savePlants(plants);
+  return plants;
+}
+
+let plants = mergeSeedData(loadPlants());
 let currentViewId = null;
 
 const plantListEl = document.getElementById('plant-list');
@@ -65,12 +116,16 @@ function render() {
         : `<div class="plant-thumb-placeholder">🌸</div>`;
 
       const metaParts = [plant.bloom, plant.location].filter(Boolean);
+      const hardinessHtml = plant.hardiness
+        ? `<div class="plant-card-hardiness" title="Külmakindlus">❄️ ${escapeHtml(plant.hardiness)}</div>`
+        : '';
 
       card.innerHTML = `
         ${thumbHtml}
         <div class="plant-card-info">
           <h3>${escapeHtml(plant.name)}</h3>
           <div class="plant-card-meta">${escapeHtml(metaParts.join(' · ') || 'Andmed lisamata')}</div>
+          ${hardinessHtml}
         </div>
       `;
       card.addEventListener('click', () => openViewModal(plant.id));
@@ -92,6 +147,19 @@ function escapeAttr(str) {
   return escapeHtml(str).replace(/"/g, '&quot;');
 }
 
+function getColorHex(plant) {
+  return VARIETY_COLOR_HEX[plant.name] || '';
+}
+
+function updateColorSwatch(el, hex) {
+  if (hex) {
+    el.style.setProperty('--swatch-color', hex);
+    el.hidden = false;
+  } else {
+    el.hidden = true;
+  }
+}
+
 function openViewModal(id) {
   const plant = plants.find(p => p.id === id);
   if (!plant) return;
@@ -106,6 +174,7 @@ function openViewModal(id) {
   document.getElementById('view-origin').textContent = plant.origin || '—';
   document.getElementById('view-color').textContent = plant.color || '—';
   document.getElementById('view-notes').textContent = plant.notes || '—';
+  updateColorSwatch(document.getElementById('view-color-swatch'), getColorHex(plant));
 
   const photoEl = document.getElementById('view-photo');
   if (plant.photo) {
@@ -143,6 +212,7 @@ function openEditModal(id = null) {
     document.getElementById('field-origin').value = plant.origin || '';
     document.getElementById('field-color').value = plant.color || '';
     document.getElementById('field-notes').value = plant.notes || '';
+    updateColorSwatch(document.getElementById('form-color-swatch'), getColorHex(plant));
     if (plant.photo) {
       form.dataset.photo = plant.photo;
       const preview = document.getElementById('photo-preview');
@@ -156,6 +226,7 @@ function openEditModal(id = null) {
   } else {
     document.getElementById('edit-modal-title').textContent = 'Lisa taim';
     document.getElementById('plant-id').value = '';
+    document.getElementById('form-color-swatch').hidden = true;
   }
 
   editModal.hidden = false;
