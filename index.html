@@ -44,6 +44,7 @@
     <button class="modal-close" data-close-view>&times;</button>
     <img id="view-photo" class="view-photo" hidden alt="">
     <h2 id="view-name"></h2>
+    <span id="view-type" class="type-badge" hidden></span>
     <dl class="view-details">
       <dt>Asukoht aias</dt><dd id="view-location">—</dd>
     </dl>
@@ -74,6 +75,13 @@
 
       <label for="field-name">Nimi *</label>
       <input type="text" id="field-name" required placeholder="nt Fryderyk">
+
+      <label for="field-type">Liik</label>
+      <select id="field-type">
+        <option value="">— vali —</option>
+        <option value="Rododendron">Rododendron</option>
+        <option value="Asalea">Asalea</option>
+      </select>
 
       <label for="field-location">Asukoht aias</label>
       <input type="text" id="field-location" placeholder="nt lääneserv, suure kase all">

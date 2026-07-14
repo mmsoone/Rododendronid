@@ -2,7 +2,7 @@ const STORAGE_KEY = 'rododendronid.plants.v1';
 
 const VARIETY_COLOR_HEX = {
   'Fryderyk': '#F4E5B8',
-  'Marietta': '#C9509E',
+  'Marietta': '#EDE0B0',
   'Nicoletta': '#F2C6D9',
   'Millenium Gold': '#E8C547',
   'Haaga': '#D9548C',
@@ -18,25 +18,26 @@ const VARIETY_COLOR_HEX = {
 };
 
 const SEED_DATA = [
-  { name: 'Fryderyk', height: '50-60 cm', width: '80 cm', hardiness: 'kuni -24°C', origin: 'Poola (Piotr Muras, 2010)' },
-  { name: 'Marietta', height: '120-140 cm', width: '90-100 cm', hardiness: 'kuni -21°C', origin: 'Saksamaa (Hans Hachmann, u. 1986)' },
-  { name: 'Nicoletta', height: '60-70 cm', width: '100-110 cm', hardiness: 'kuni -23°C', origin: 'Inglismaa (Waterer, Bagshot, 1969)' },
-  { name: 'Millenium Gold', height: '90-120 cm', width: '90-120 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
-  { name: 'Haaga', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -32°C', origin: 'Soome (Helsingi Ülikool / Mustila, Tigerstedt programm)' },
-  { name: 'Princes Daisy', height: '', width: '', hardiness: '', origin: 'Poola (Eugeniusz Pudełek, u. 2023)' },
-  { name: 'Irene Koster', height: '180-240 cm', width: '150-180 cm', hardiness: 'kuni -23°C', origin: 'Holland (M. Koster & Sons)' },
-  { name: 'Apricot', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -26°C', origin: 'USA (Joseph Gable)' },
-  { name: 'Helsinki University', height: '150-180 cm', width: '100-120 cm', hardiness: 'kuni -39°C', origin: 'Soome (Helsingi Ülikool / Mustila)' },
-  { name: 'Elsie Straver', height: '200-250 cm', width: '200-250 cm', hardiness: 'kuni -18°C', origin: 'Holland (Boskoop)' },
-  { name: 'Cunninghama White', height: '200-220 cm', width: '150-160 cm', hardiness: 'kuni -26°C', origin: 'Šotimaa (James Cunningham, 1830)' },
-  { name: 'Anna Rose Whitney', height: '180-200 cm', width: '180-200 cm', hardiness: 'kuni -21°C', origin: 'USA (William E. Whitney, 1954)' },
-  { name: 'Diorama', height: '160-200 cm', width: '100-200 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
-  { name: 'Lilac Lights', height: '120 cm', width: '120 cm', hardiness: 'kuni -34°C', origin: 'USA (Bailey Nurseries, Minnesota)' }
+  { name: 'Fryderyk', type: 'Rododendron', height: '50-60 cm', width: '80 cm', hardiness: 'kuni -24°C', origin: 'Poola (Piotr Muras, 2010)' },
+  { name: 'Marietta', type: 'Rododendron', height: '70-80 cm', width: '100-110 cm', hardiness: 'kuni -21°C', origin: 'Saksamaa (Hans Hachmann, u. 1986)' },
+  { name: 'Nicoletta', type: 'Rododendron', height: '60-70 cm', width: '100-110 cm', hardiness: 'kuni -23°C', origin: 'Inglismaa (Waterer, Bagshot, 1969)' },
+  { name: 'Millenium Gold', type: 'Rododendron', height: '90-120 cm', width: '90-120 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
+  { name: 'Haaga', type: 'Rododendron', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -32°C', origin: 'Soome (Helsingi Ülikool / Mustila, Tigerstedt programm)' },
+  { name: 'Princes Daisy', type: 'Asalea', height: '', width: '', hardiness: '', origin: 'Poola (Eugeniusz Pudełek, u. 2023)' },
+  { name: 'Irene Koster', type: 'Asalea', height: '180-240 cm', width: '150-180 cm', hardiness: 'kuni -23°C', origin: 'Holland (M. Koster & Sons)' },
+  { name: 'Apricot', type: 'Asalea', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -26°C', origin: 'USA (Joseph Gable)' },
+  { name: 'Helsinki University', type: 'Rododendron', height: '150-180 cm', width: '100-120 cm', hardiness: 'kuni -39°C', origin: 'Soome (Helsingi Ülikool / Mustila)' },
+  { name: 'Elsie Straver', type: 'Rododendron', height: '200-250 cm', width: '200-250 cm', hardiness: 'kuni -18°C', origin: 'Holland (Boskoop)' },
+  { name: 'Cunninghama White', type: 'Rododendron', height: '200-220 cm', width: '150-160 cm', hardiness: 'kuni -26°C', origin: 'Šotimaa (James Cunningham, 1830)' },
+  { name: 'Anna Rose Whitney', type: 'Rododendron', height: '180-200 cm', width: '180-200 cm', hardiness: 'kuni -21°C', origin: 'USA (William E. Whitney, 1954)' },
+  { name: 'Diorama', type: 'Asalea', height: '160-200 cm', width: '100-200 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
+  { name: 'Lilac Lights', type: 'Asalea', height: '120 cm', width: '120 cm', hardiness: 'kuni -34°C', origin: 'USA (Bailey Nurseries, Minnesota)' }
 ];
 
-const SEED_PLANTS = SEED_DATA.map(({ name, height, width, hardiness, origin }) => ({
+const SEED_PLANTS = SEED_DATA.map(({ name, type, height, width, hardiness, origin }) => ({
   id: crypto.randomUUID(),
   name,
+  type: type || '',
   location: '',
   bloom: '',
   height,
@@ -75,7 +76,7 @@ function mergeSeedData(plants) {
       plants.push({ ...seed, id: crypto.randomUUID() });
       changed = true;
     } else {
-      ['height', 'width', 'hardiness', 'origin'].forEach(field => {
+      ['type', 'height', 'width', 'hardiness', 'origin'].forEach(field => {
         if (!existing[field] && seed[field]) {
           existing[field] = seed[field];
           changed = true;
@@ -121,13 +122,16 @@ function render() {
       const hardinessHtml = plant.hardiness
         ? `<div class="plant-card-hardiness" title="Külmakindlus">❄️ ${escapeHtml(plant.hardiness)}</div>`
         : '';
+      const typeHtml = plant.type
+        ? `<div class="plant-card-type">${escapeHtml(plant.type)}</div>`
+        : '';
 
       card.innerHTML = `
         ${thumbHtml}
         <div class="plant-card-info">
           <h3>${escapeHtml(plant.name)}</h3>
           <div class="plant-card-meta">${escapeHtml(metaParts.join(' · ') || 'Andmed lisamata')}</div>
-          ${hardinessHtml}
+          ${typeHtml}${hardinessHtml}
         </div>
       `;
       card.addEventListener('click', () => openViewModal(plant.id));
@@ -168,6 +172,13 @@ function openViewModal(id) {
   currentViewId = id;
 
   document.getElementById('view-name').textContent = plant.name;
+  const typeEl = document.getElementById('view-type');
+  if (plant.type) {
+    typeEl.textContent = plant.type;
+    typeEl.hidden = false;
+  } else {
+    typeEl.hidden = true;
+  }
   document.getElementById('view-location').textContent = plant.location || '—';
   document.getElementById('view-bloom').textContent = plant.bloom || '—';
   document.getElementById('view-height').textContent = plant.height || '—';
@@ -217,6 +228,7 @@ function openEditModal(id = null) {
     document.getElementById('edit-modal-title').textContent = 'Muuda taime';
     document.getElementById('plant-id').value = plant.id;
     document.getElementById('field-name').value = plant.name || '';
+    document.getElementById('field-type').value = plant.type || '';
     document.getElementById('field-location').value = plant.location || '';
     document.getElementById('field-bloom').value = plant.bloom || '';
     document.getElementById('field-height').value = plant.height || '';
@@ -343,6 +355,7 @@ document.getElementById('plant-form').addEventListener('submit', e => {
   const id = document.getElementById('plant-id').value;
   const data = {
     name: document.getElementById('field-name').value.trim(),
+    type: document.getElementById('field-type').value,
     location: document.getElementById('field-location').value.trim(),
     bloom: document.getElementById('field-bloom').value,
     height: document.getElementById('field-height').value.trim(),
