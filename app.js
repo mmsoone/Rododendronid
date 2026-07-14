@@ -13,16 +13,17 @@ const VARIETY_COLOR_HEX = {
   'Cunninghama White': '#F7F5F0',
   'Anna Rose Whitney': '#D9739A',
   'Diorama': '#E8622E',
-  'Lilac Lights': '#B57EDC'
+  'Lilac Lights': '#B57EDC',
+  'Princes Daisy': '#F7E6E0'
 };
 
 const SEED_DATA = [
   { name: 'Fryderyk', height: '50-60 cm', width: '80 cm', hardiness: 'kuni -24°C', origin: 'Poola (Piotr Muras, 2010)' },
-  { name: 'Marietta', height: '120-140 cm', width: '90-100 cm', hardiness: 'kuni -21°C', origin: '' },
+  { name: 'Marietta', height: '120-140 cm', width: '90-100 cm', hardiness: 'kuni -21°C', origin: 'Saksamaa (Hans Hachmann, u. 1986)' },
   { name: 'Nicoletta', height: '60-70 cm', width: '100-110 cm', hardiness: 'kuni -23°C', origin: 'Inglismaa (Waterer, Bagshot, 1969)' },
   { name: 'Millenium Gold', height: '90-120 cm', width: '90-120 cm', hardiness: 'kuni -23°C', origin: 'Holland (Boskoop)' },
   { name: 'Haaga', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -32°C', origin: 'Soome (Helsingi Ülikool / Mustila, Tigerstedt programm)' },
-  { name: 'Princes Daisy', height: '', width: '', hardiness: '', origin: '' },
+  { name: 'Princes Daisy', height: '', width: '', hardiness: '', origin: 'Poola (Eugeniusz Pudełek, u. 2023)' },
   { name: 'Irene Koster', height: '180-240 cm', width: '150-180 cm', hardiness: 'kuni -23°C', origin: 'Holland (M. Koster & Sons)' },
   { name: 'Apricot', height: '150-180 cm', width: '120-150 cm', hardiness: 'kuni -26°C', origin: 'USA (Joseph Gable)' },
   { name: 'Helsinki University', height: '150-180 cm', width: '100-120 cm', hardiness: 'kuni -39°C', origin: 'Soome (Helsingi Ülikool / Mustila)' },
@@ -330,6 +331,140 @@ document.getElementById('plant-form').addEventListener('submit', e => {
 searchInput.addEventListener('input', render);
 
 render();
+
+const LOCATION_KEY = 'rododendronid.location.v1';
+
+function loadLocation() {
+  try {
+    return JSON.parse(localStorage.getItem(LOCATION_KEY));
+  } catch {
+    return null;
+  }
+}
+
+function saveLocation(loc) {
+  localStorage.setItem(LOCATION_KEY, JSON.stringify(loc));
+}
+
+function parseHardinessThreshold(hardiness) {
+  if (!hardiness) return null;
+  const match = hardiness.match(/-\d+(\.\d+)?/);
+  return match ? parseFloat(match[0]) : null;
+}
+
+async function geocodeCity(name) {
+  const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(name)}&count=1&language=et&format=json`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  if (!data.results || !data.results.length) return null;
+  const r = data.results[0];
+  return {
+    lat: r.latitude,
+    lon: r.longitude,
+    label: [r.name, r.admin1, r.country].filter(Boolean).join(', ')
+  };
+}
+
+async function fetchForecastMinTemps(lat, lon) {
+  const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&daily=temperature_2m_min&forecast_days=7&timezone=auto`;
+  const resp = await fetch(url);
+  const data = await resp.json();
+  return data.daily || null;
+}
+
+function updateLocationLabel() {
+  const loc = loadLocation();
+  document.getElementById('location-label').textContent = loc ? `📍 ${loc.label}` : '📍 Asukoht määramata';
+}
+
+async function checkWeatherWarning() {
+  const loc = loadLocation();
+  const banner = document.getElementById('weather-banner');
+  if (!loc) {
+    banner.hidden = true;
+    return;
+  }
+  try {
+    const daily = await fetchForecastMinTemps(loc.lat, loc.lon);
+    if (!daily || !daily.temperature_2m_min) {
+      banner.hidden = true;
+      return;
+    }
+    let worstIndex = -1;
+    let worstTemp = Infinity;
+    daily.temperature_2m_min.forEach((t, i) => {
+      if (t < worstTemp) {
+        worstTemp = t;
+        worstIndex = i;
+      }
+    });
+
+    const atRisk = plants.filter(p => {
+      const threshold = parseHardinessThreshold(p.hardiness);
+      return threshold !== null && worstTemp < threshold;
+    });
+
+    if (atRisk.length > 0) {
+      const dateStr = new Date(daily.time[worstIndex]).toLocaleDateString('et-EE', {
+        weekday: 'long', day: 'numeric', month: 'long'
+      });
+      document.getElementById('weather-banner-text').textContent =
+        `❄️ ${dateStr} oodatakse kuni ${Math.round(worstTemp)}°C — kata kindlasti: ${atRisk.map(p => p.name).join(', ')}`;
+      banner.hidden = false;
+    } else {
+      banner.hidden = true;
+    }
+  } catch {
+    banner.hidden = true;
+  }
+}
+
+document.getElementById('location-edit-btn').addEventListener('click', () => {
+  const loc = loadLocation();
+  document.getElementById('location-input').value = loc ? loc.label.split(',')[0] : '';
+  document.getElementById('location-error').hidden = true;
+  document.getElementById('location-modal').hidden = false;
+});
+
+document.querySelectorAll('[data-close-location]').forEach(el =>
+  el.addEventListener('click', () => { document.getElementById('location-modal').hidden = true; })
+);
+
+document.getElementById('location-modal').addEventListener('click', e => {
+  if (e.target.id === 'location-modal') document.getElementById('location-modal').hidden = true;
+});
+
+document.getElementById('location-save-btn').addEventListener('click', async () => {
+  const name = document.getElementById('location-input').value.trim();
+  const errorEl = document.getElementById('location-error');
+  errorEl.hidden = true;
+  if (!name) return;
+
+  const btn = document.getElementById('location-save-btn');
+  btn.disabled = true;
+  btn.textContent = 'Otsin...';
+  try {
+    const result = await geocodeCity(name);
+    if (!result) {
+      errorEl.textContent = 'Kohta ei leitud, proovi teistsugust kirjapilti.';
+      errorEl.hidden = false;
+      return;
+    }
+    saveLocation(result);
+    updateLocationLabel();
+    document.getElementById('location-modal').hidden = true;
+    checkWeatherWarning();
+  } catch {
+    errorEl.textContent = 'Ilmaandmete laadimine ebaõnnestus. Kontrolli internetiühendust.';
+    errorEl.hidden = false;
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Salvesta';
+  }
+});
+
+updateLocationLabel();
+checkWeatherWarning();
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {

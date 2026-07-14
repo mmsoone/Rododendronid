@@ -17,6 +17,15 @@
   <p class="subtitle" id="plant-count"></p>
 </header>
 
+<div id="weather-banner" class="weather-banner" hidden>
+  <p id="weather-banner-text"></p>
+</div>
+
+<div class="location-bar">
+  <span id="location-label">📍 Asukoht määramata</span>
+  <button id="location-edit-btn" class="btn-text">Määra</button>
+</div>
+
 <main>
   <div class="search-bar">
     <input type="search" id="search-input" placeholder="Otsi nime järgi..." autocomplete="off">
@@ -112,6 +121,21 @@
         <button type="button" class="btn btn-secondary" data-close-edit>Loobu</button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- Asukoha modaal -->
+<div id="location-modal" class="modal-overlay" hidden>
+  <div class="modal">
+    <button class="modal-close" data-close-location>&times;</button>
+    <h2>Aia asukoht</h2>
+    <p class="modal-hint">Sisesta oma linn või vald, et äpp saaks talvel hoiatada, kui ilm läheb taimedele liiga külmaks.</p>
+    <input type="text" id="location-input" placeholder="nt Tartu, Pärnu, Tallinn">
+    <p id="location-error" class="location-error" hidden></p>
+    <div class="modal-actions">
+      <button id="location-save-btn" class="btn btn-primary">Salvesta</button>
+      <button type="button" class="btn btn-secondary" data-close-location>Loobu</button>
+    </div>
   </div>
 </div>
 

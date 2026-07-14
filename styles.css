@@ -44,6 +44,49 @@ main {
   margin: 0 auto;
 }
 
+.weather-banner {
+  max-width: 640px;
+  margin: 14px auto 0;
+  padding: 0 16px;
+}
+.weather-banner p {
+  margin: 0;
+  background: #fdecc8;
+  color: #7a5a1e;
+  border: 1px solid #f0d28f;
+  border-radius: 12px;
+  padding: 12px 14px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.location-bar {
+  max-width: 640px;
+  margin: 10px auto 0;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: var(--muted);
+}
+.location-bar .btn-text {
+  font-size: 0.85rem;
+  padding: 0;
+}
+
+.modal-hint {
+  color: var(--muted);
+  font-size: 0.9rem;
+  margin-top: 0;
+}
+
+.location-error {
+  color: var(--danger);
+  font-size: 0.85rem;
+}
+
 .search-bar {
   margin-bottom: 14px;
 }
