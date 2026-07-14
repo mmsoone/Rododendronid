@@ -1,4 +1,4 @@
-const CACHE_NAME = 'rododendronid-v6';
+const CACHE_NAME = 'rododendronid-v7';
 const ASSETS = [
   './',
   './index.html',

@@ -64,7 +64,13 @@ function loadPlants() {
 }
 
 function savePlants(plants) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(plants));
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(plants));
+    return true;
+  } catch (e) {
+    alert('Salvestamine ebaõnnestus - fotod võtavad liiga palju ruumi. Proovi väiksemat fotot või eemalda mõnelt taimelt vana foto ja proovi uuesti.');
+    return false;
+  }
 }
 
 function mergeSeedData(plants) {
@@ -296,6 +302,34 @@ document.getElementById('view-delete-btn').addEventListener('click', () => {
   }
 });
 
+function resizeImage(file, maxDim = 1000, quality = 0.75) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => {
+      const img = new Image();
+      img.onload = () => {
+        let { width, height } = img;
+        if (width > height && width > maxDim) {
+          height = Math.round(height * (maxDim / width));
+          width = maxDim;
+        } else if (height > maxDim) {
+          width = Math.round(width * (maxDim / height));
+          height = maxDim;
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = width;
+        canvas.height = height;
+        canvas.getContext('2d').drawImage(img, 0, 0, width, height);
+        resolve(canvas.toDataURL('image/jpeg', quality));
+      };
+      img.onerror = () => reject(new Error('Pilti ei õnnestunud lugeda'));
+      img.src = reader.result;
+    };
+    reader.onerror = () => reject(new Error('Faili ei õnnestunud lugeda'));
+    reader.readAsDataURL(file);
+  });
+}
+
 function setPhotoPreview(url) {
   document.getElementById('plant-form').dataset.photo = url;
   const preview = document.getElementById('photo-preview');
@@ -305,13 +339,16 @@ function setPhotoPreview(url) {
   document.getElementById('photo-remove-btn').hidden = false;
 }
 
-document.getElementById('field-photo').addEventListener('change', e => {
+document.getElementById('field-photo').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
   document.getElementById('field-photo-url').value = '';
-  const reader = new FileReader();
-  reader.onload = () => setPhotoPreview(reader.result);
-  reader.readAsDataURL(file);
+  try {
+    const resized = await resizeImage(file);
+    setPhotoPreview(resized);
+  } catch {
+    alert('Foto töötlemine ebaõnnestus. Proovi teist fotot.');
+  }
 });
 
 document.getElementById('field-photo-url').addEventListener('input', e => {
@@ -329,18 +366,19 @@ document.getElementById('photo-remove-btn').addEventListener('click', () => {
   document.getElementById('photo-remove-btn').hidden = true;
 });
 
-document.getElementById('field-location-photo').addEventListener('change', e => {
+document.getElementById('field-location-photo').addEventListener('change', async e => {
   const file = e.target.files[0];
   if (!file) return;
-  const reader = new FileReader();
-  reader.onload = () => {
-    document.getElementById('plant-form').dataset.locationPhoto = reader.result;
+  try {
+    const resized = await resizeImage(file);
+    document.getElementById('plant-form').dataset.locationPhoto = resized;
     const preview = document.getElementById('location-photo-preview');
-    preview.src = reader.result;
+    preview.src = resized;
     preview.hidden = false;
     document.getElementById('location-photo-remove-btn').hidden = false;
-  };
-  reader.readAsDataURL(file);
+  } catch {
+    alert('Foto töötlemine ebaõnnestus. Proovi teist fotot.');
+  }
 });
 
 document.getElementById('location-photo-remove-btn').addEventListener('click', () => {
@@ -377,9 +415,10 @@ document.getElementById('plant-form').addEventListener('submit', e => {
     plants.push({ id: crypto.randomUUID(), ...data });
   }
 
-  savePlants(plants);
-  closeEditModal();
-  render();
+  if (savePlants(plants)) {
+    closeEditModal();
+    render();
+  }
 });
 
 searchInput.addEventListener('input', render);
