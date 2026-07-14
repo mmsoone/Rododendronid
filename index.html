@@ -46,6 +46,9 @@
     <h2 id="view-name"></h2>
     <dl class="view-details">
       <dt>Asukoht aias</dt><dd id="view-location">—</dd>
+    </dl>
+    <img id="view-location-photo" class="location-photo" hidden alt="Asukoha foto aias">
+    <dl class="view-details">
       <dt>Õitsemisaeg</dt><dd id="view-bloom">—</dd>
       <dt title="Kõrgus">↕</dt><dd id="view-height">—</dd>
       <dt title="Laius">↔</dt><dd id="view-width">—</dd>
@@ -74,6 +77,11 @@
 
       <label for="field-location">Asukoht aias</label>
       <input type="text" id="field-location" placeholder="nt lääneserv, suure kase all">
+
+      <label for="field-location-photo">Asukoha foto aias (nt lipuke taime juures)</label>
+      <input type="file" id="field-location-photo" accept="image/*">
+      <img id="location-photo-preview" class="photo-preview" hidden alt="">
+      <button type="button" id="location-photo-remove-btn" class="btn btn-text" hidden>Eemalda asukoha foto</button>
 
       <label for="field-bloom">Õitsemisaeg</label>
       <select id="field-bloom">

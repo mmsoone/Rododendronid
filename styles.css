@@ -241,6 +241,18 @@ main {
   margin-bottom: 12px;
 }
 
+.location-photo {
+  width: 140px;
+  max-height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 6px 0 4px;
+  display: block;
+}
+.location-photo[hidden] {
+  display: none;
+}
+
 .view-details {
   display: grid;
   grid-template-columns: auto 1fr;

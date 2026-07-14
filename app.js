@@ -45,7 +45,8 @@ const SEED_PLANTS = SEED_DATA.map(({ name, height, width, hardiness, origin }) =
   origin,
   color: '',
   notes: '',
-  photo: ''
+  photo: '',
+  locationPhoto: ''
 }));
 
 function loadPlants() {
@@ -185,6 +186,14 @@ function openViewModal(id) {
     photoEl.hidden = true;
   }
 
+  const locationPhotoEl = document.getElementById('view-location-photo');
+  if (plant.locationPhoto) {
+    locationPhotoEl.src = plant.locationPhoto;
+    locationPhotoEl.hidden = false;
+  } else {
+    locationPhotoEl.hidden = true;
+  }
+
   viewModal.hidden = false;
 }
 
@@ -199,6 +208,9 @@ function openEditModal(id = null) {
   document.getElementById('photo-preview').hidden = true;
   document.getElementById('photo-remove-btn').hidden = true;
   form.dataset.photo = '';
+  document.getElementById('location-photo-preview').hidden = true;
+  document.getElementById('location-photo-remove-btn').hidden = true;
+  form.dataset.locationPhoto = '';
 
   if (id) {
     const plant = plants.find(p => p.id === id);
@@ -223,6 +235,13 @@ function openEditModal(id = null) {
       if (plant.photo.startsWith('http')) {
         document.getElementById('field-photo-url').value = plant.photo;
       }
+    }
+    if (plant.locationPhoto) {
+      form.dataset.locationPhoto = plant.locationPhoto;
+      const locPreview = document.getElementById('location-photo-preview');
+      locPreview.src = plant.locationPhoto;
+      locPreview.hidden = false;
+      document.getElementById('location-photo-remove-btn').hidden = false;
     }
   } else {
     document.getElementById('edit-modal-title').textContent = 'Lisa taim';
@@ -298,6 +317,27 @@ document.getElementById('photo-remove-btn').addEventListener('click', () => {
   document.getElementById('photo-remove-btn').hidden = true;
 });
 
+document.getElementById('field-location-photo').addEventListener('change', e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = () => {
+    document.getElementById('plant-form').dataset.locationPhoto = reader.result;
+    const preview = document.getElementById('location-photo-preview');
+    preview.src = reader.result;
+    preview.hidden = false;
+    document.getElementById('location-photo-remove-btn').hidden = false;
+  };
+  reader.readAsDataURL(file);
+});
+
+document.getElementById('location-photo-remove-btn').addEventListener('click', () => {
+  document.getElementById('plant-form').dataset.locationPhoto = '';
+  document.getElementById('field-location-photo').value = '';
+  document.getElementById('location-photo-preview').hidden = true;
+  document.getElementById('location-photo-remove-btn').hidden = true;
+});
+
 document.getElementById('plant-form').addEventListener('submit', e => {
   e.preventDefault();
   const id = document.getElementById('plant-id').value;
@@ -311,7 +351,8 @@ document.getElementById('plant-form').addEventListener('submit', e => {
     origin: document.getElementById('field-origin').value.trim(),
     color: document.getElementById('field-color').value.trim(),
     notes: document.getElementById('field-notes').value.trim(),
-    photo: e.target.dataset.photo || ''
+    photo: e.target.dataset.photo || '',
+    locationPhoto: e.target.dataset.locationPhoto || ''
   };
 
   if (!data.name) return;
